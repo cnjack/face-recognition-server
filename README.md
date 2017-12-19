@@ -47,9 +47,9 @@ Create the database by issuing the following in the data folder `sqlite3 images.
 Download the [AT&T face database](http://www.cl.cam.ac.uk/research/dtg/attarchive/facedatabase.html) and extract it to `data/images` before the server is started. This is needed to build the initial prediction model.
 
     cd data
-    wget http://www.cl.cam.ac.uk/Research/DTG/attarchive/pub/data/att_faces.tar.Z
+    curl -o att_faces.tar.Z http://www.cl.cam.ac.uk/research/dtg/attarchive/pub/data/att_faces.tar.Z
     tar zxvf att_faces.tar.Z
-    mv att_faces images
+    mv orl_faces images
 
 Copy `haarcascade_frontalface_alt.xml` from `<path to opencv source>/data/haarcascades/` to the data folder.
 

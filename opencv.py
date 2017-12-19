@@ -61,13 +61,15 @@ def load_images_to_db(path):
   for dirname, dirnames, filenames in os.walk(path):
     for subdirname in dirnames:
       subject_path = os.path.join(dirname, subdirname)
-      label = Label.get_or_create(name=subdirname)
-      label.save()
+      label, created = Label.get_or_create(name=subdirname)
+      if created is True:
+        label.save(force_insert=True)
       for filename in os.listdir(subject_path):
         path = os.path.abspath(os.path.join(subject_path, filename))
         logging.info('saving path %s' % path)
-        image = Image.get_or_create(path=path, label=label)
-        image.save()
+        image, created = Image.get_or_create(path=path, label=label)
+        if created is True:
+          image.save(force_insert=True)
 
 def load_images_from_db():
   images, labels = [],[]
@@ -75,7 +77,7 @@ def load_images_from_db():
     for image in label.image_set:
       try:
         cv_image = cv2.imread(image.path, cv2.IMREAD_GRAYSCALE)
-        cv_image = cv2.resize(cv_image, (100,100))
+        cv_image = cv2.resize(cv_image, (100, 100))
         images.append(np.asarray(cv_image, dtype=np.uint8))
         labels.append(label.id)
       except IOError as e:
@@ -95,7 +97,6 @@ def predict(cv_image):
     cropped = to_grayscale(crop_faces(cv_image, faces))
     resized = cv2.resize(cropped, (100,100))
     model = cv2.face.FisherFaceRecognizer_create()
-    #model = cv2.createEigenFaceRecognizer()
     model.load(MODEL_FILE)
     prediction = model.predict(resized)
     result = {
