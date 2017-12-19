@@ -39,9 +39,9 @@ def crop_faces(img, faces):
 def load_images(path):
   images, labels = [], []
   c = 0
-  print "test " + path
+  print("test " + path)
   for dirname, dirnames, filenames in os.walk(path):
-    print "test"
+    print("test")
     for subdirname in dirnames:
       subjectPath = os.path.join(dirname, subdirname)
       for filename in os.listdir(subjectPath):
@@ -49,10 +49,10 @@ def load_images(path):
           img = cv2.imread(os.path.join(subjectPath, filename), cv2.IMREAD_GRAYSCALE)
           images.append(np.asarray(img, dtype=np.uint8))
           labels.append(c)
-        except IOError, (errno, strerror):
-          print "IOError({0}): {1}".format(errno, strerror)
-        except:
-          print "Unexpected error:" , sys.exc_info()[0]
+        except IOError as e:
+          print("IOError({0}): {1}".format(e))
+        except Exception as e:
+          print("Unexpected error:" , sys.exc_info()[0])
           raise
       c += 1
     return images, labels
@@ -78,15 +78,14 @@ def load_images_from_db():
         cv_image = cv2.resize(cv_image, (100,100))
         images.append(np.asarray(cv_image, dtype=np.uint8))
         labels.append(label.id)
-      except IOError, (errno, strerror):
-       print "IOError({0}): {1}".format(errno, strerror)
+      except IOError as e:
+       print("IOError({0}): {1}".format(e))
   return images, np.asarray(labels)
 
 def train():
   images, labels = load_images_from_db()
-  model = cv2.createFisherFaceRecognizer()
-  #model = cv2.createEigenFaceRecognizer()
-  model.train(images,labels)
+  model = cv2.face.FisherFaceRecognizer_create()
+  model.train(images, labels)
   model.save(MODEL_FILE)
 
 def predict(cv_image):
@@ -95,8 +94,7 @@ def predict(cv_image):
   if len(faces) > 0:
     cropped = to_grayscale(crop_faces(cv_image, faces))
     resized = cv2.resize(cropped, (100,100))
-
-    model = cv2.createFisherFaceRecognizer()
+    model = cv2.face.FisherFaceRecognizer_create()
     #model = cv2.createEigenFaceRecognizer()
     model.load(MODEL_FILE)
     prediction = model.predict(resized)
@@ -160,8 +158,5 @@ class Image(BaseModel):
 
 if __name__ == "__main__":
   load_images_to_db("data/images")
-  #train()
 
-  print 'done'
-  #predict()
-  #train()
+  print('done')

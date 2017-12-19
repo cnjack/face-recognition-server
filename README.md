@@ -55,3 +55,9 @@ Copy `haarcascade_frontalface_alt.xml` from `<path to opencv source>/data/haarca
 
 Run with `python server.py` and browse to http://localhost:8888 when the model has been trained.
 
+
+## notice
+```
+pip install opencv-contrib-python
+```
+to make sure the `face` in cv2
